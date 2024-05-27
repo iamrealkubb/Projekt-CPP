@@ -13,8 +13,12 @@ protected:
 public:
     virtual void przedstaw() = 0; // CZYSTO WIRTUALNA METODA
     virtual void przyjmijObrazenia(int) = 0; // CZYSTO WIRTUALNA METODA
-    string pobierzImie();
+    void zmienZdrowie(int ilosc);
+    string pobierzImie() const;
     virtual ~Postac() = default; // DESTRUKTOR
+
+    friend class Druzyna; // DEKLARACJA PRZYJACIELA
+    friend class Gra; // DEKLARACJA PRZYJACIELA
 };
 
 class Wojownik : public Postac { // DZIEDZICZENIE
@@ -22,7 +26,7 @@ class Wojownik : public Postac { // DZIEDZICZENIE
 public:
     Wojownik(string &i, int z, int w); // KONSTRUKTOR
     Wojownik(Wojownik &inny); // KONSTRUKTOR KOPIUJACY
-    void uderzMieczem(Postac &cel);
+    void uderzMieczem(Postac* cel);
     void przedstaw() override;
     void przyjmijObrazenia(int ilosc) override;
 };
@@ -32,7 +36,7 @@ class Mag : public Postac { // DZIEDZICZENIE
 public:
     Mag(string &i, int z, int m); // KONSTRUKTOR
     Mag(Mag &inny); // KONSTRUKTOR KOPIUJACY
-    void rzucZaklecie(Postac &cel);
+    void rzucZaklecie(Postac* cel);
     void przedstaw() override;
     void przyjmijObrazenia(int ilosc) override;
 };
@@ -42,7 +46,7 @@ class Lucznik : public Postac { // DZIEDZICZENIE
 public:
     Lucznik(string &i, int z, int s); // KONSTRUKTOR
     Lucznik(Lucznik &inny); // KONSTRUKTOR KOPIUJACY
-    void strzelZLuku(Postac &cel);
+    void strzelZLuku(Postac* cel);
     void przedstaw() override;
     void przyjmijObrazenia(int ilosc) override;
 };
@@ -53,9 +57,12 @@ class Druzyna {
 public:
     Druzyna(string &n); // KONSTRUKTOR
     void dodajCzlonka(Postac *czlonek);
-    void usunCzlonka(string &imie);
+    void czyZyje();
+    void usunCzlonka(string imie);
     void przedstawDruzyne();
     ~Druzyna(); // DESTRUKTOR
+
+    friend class Gra; // DEKLARACJA PRZYJACIELA
 };
 
 class Gra {
@@ -65,6 +72,19 @@ public:
     void start();
 };
 
-bool imieDoUsuniecia(Postac *czlonek);
+template <typename T> // WLASNY SZABLON KLASY
+class Przedmiot {
+protected:
+    T wartosc;
+public:
+    virtual void uzyj(Postac* postac);
+};
+
+class MiksturaZdrowia : public Przedmiot<int> {
+public:
+    MiksturaZdrowia(int wartosc);
+};
+
+int losowaLiczba(int dolnaGranica, int gornaGranica);
 
 #endif
